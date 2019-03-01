@@ -12,5 +12,5 @@ void LEDInit(void)
 }
 void LEDSet(char bitmask)
 {
-	PORTE.OUT= (bitmask & 0b11110000)|(PORTE.OUT & 0b00001111);
+	PORTE.OUT= (bitmask & 0b00001111)|(PORTE.OUT & 0b11110000);
 }

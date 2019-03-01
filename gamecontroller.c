@@ -45,6 +45,7 @@ int main(void)
 		for (int i = 0; i<4; i++)
 		{
 			LEDSet(0b00000001 << i);
+			_delay_ms(500);
 		}
 		
 	}
