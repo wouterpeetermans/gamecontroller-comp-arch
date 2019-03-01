@@ -42,7 +42,8 @@ int main(void)
 	
 	
 	while (1){
-		printf("the value of the switches is: ", SwitchGet());
+		sprintf(text, "switches: %d\r", SwitchGet());
+		puts(text);
 	}
 
 }

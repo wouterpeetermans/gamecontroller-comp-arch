@@ -14,6 +14,6 @@ void SwitchInit(void)
 
 char SwitchGet(void)
 {
-	return ((PORTD.IN & 0b11100000) >> 4) | (PORTD.IN & 0b00000001);
+	return ((PORTD.IN & 0b11110000) >> 3) | (PORTD.IN & 0b00000001);
 }
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
