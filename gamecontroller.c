@@ -42,12 +42,14 @@ int main(void)
 	
 	
 	while (1){
-		for (int i = 0; i<4; i++)
-		{
-			LEDSet(0b00000001 << i);
-			_delay_ms(500);
-		}
-		
+		printf("the value of the switches is: ", SwitchGet());
 	}
 
+}
+
+void runningLight(){
+	for (int i = 0; i<4; i++)
+	{
+		LEDSet(0b00000001 << i);
+	}
 }

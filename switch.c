@@ -3,17 +3,17 @@
 
 void SwitchInit(void)
 {
-	//PORTD.DIRCLR=
-	//PORTD.PIN0CTRL=
-	//PORTD.PIN4CTRL=
-	//PORTD.PIN5CTRL=
-	//PORTD.PIN6CTRL=
-	//PORTD.PIN7CTRL=
+	PORTD.DIRCLR=0b11110001;
+	PORTD.PIN0CTRL=0b01011000;
+	PORTD.PIN4CTRL=0b01011000;
+	PORTD.PIN5CTRL=0b01011000;
+	PORTD.PIN6CTRL=0b01011000;
+	PORTD.PIN7CTRL=0b01011000;
 }
 
 
 char SwitchGet(void)
 {
-	//return 
+	return ((PORTD.IN & 0b11100000) >> 4) | (PORTD.IN & 0b00000001);
 }
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
