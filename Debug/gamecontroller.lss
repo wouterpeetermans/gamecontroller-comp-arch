@@ -584,16 +584,16 @@ void USARTInit(void)
  416:	fc 01       	movw	r30, r24
  418:	25 83       	std	Z+5, r18	; 0x05
 	
-	USART.BAUDCTRLA=0xE5; //BSEL=3301, BSCALE=-5 9600 baud
+	USART.BAUDCTRLA=0xD7; //BSEL=3301, BSCALE=-5 9600 baud
  41a:	80 ea       	ldi	r24, 0xA0	; 160
  41c:	98 e0       	ldi	r25, 0x08	; 8
- 41e:	25 ee       	ldi	r18, 0xE5	; 229
+ 41e:	27 ed       	ldi	r18, 0xD7	; 215
  420:	fc 01       	movw	r30, r24
  422:	26 83       	std	Z+6, r18	; 0x06
-	USART.BAUDCTRLB=0xBC; 
+	USART.BAUDCTRLB=0x93; 
  424:	80 ea       	ldi	r24, 0xA0	; 160
  426:	98 e0       	ldi	r25, 0x08	; 8
- 428:	2c eb       	ldi	r18, 0xBC	; 188
+ 428:	23 e9       	ldi	r18, 0x93	; 147
  42a:	fc 01       	movw	r30, r24
  42c:	27 83       	std	Z+7, r18	; 0x07
 	
