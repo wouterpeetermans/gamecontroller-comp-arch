@@ -20,8 +20,6 @@ void SimpleFunction(void);	//A simple function: print a counter (0 to 9) to the 
 
 int main(void)
 {	
-
-	
 	//###1###
 	 
 	//Initialize subsystems
@@ -36,14 +34,16 @@ int main(void)
 	
 	//Enable interrupts
 	PMIC.CTRL|=0b00000111;  //Enable low, medium, high priority interrupts
-	SREG|=0b10000000;		//Globale interrupt enable
+	SREG|=0b10000000;		//Global interrupt enable
 	_delay_ms(500);
 	
 	
 	
 	while (1){
-		sprintf(text, "switches: %d\r", SwitchGet());
-		puts(text);
+		//sprintf(text, "switches: %d\r", SwitchGet());
+		//puts(text);
+//		sprintf(text, "gestuurde output: %d\r",stdio_putchar('0b01010101',stdout));	
+		putchar('U');
 	}
 
 }

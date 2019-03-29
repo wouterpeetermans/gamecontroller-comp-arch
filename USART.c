@@ -2,8 +2,8 @@
 #include <avr/io.h>
 #include <stdio.h>
 
-static int stdio_putchar(char c, FILE * stream);
-static int stdio_getchar(FILE *stream);
+ int stdio_putchar(char c, FILE * stream);
+ int stdio_getchar(FILE *stream);
 static FILE UsartStdio = FDEV_SETUP_STREAM(stdio_putchar, stdio_getchar,_FDEV_SETUP_WRITE);
 
 void USARTInit(void)
@@ -23,7 +23,7 @@ void USARTInit(void)
 }
 
 
-static int stdio_putchar(char c, FILE * stream)
+int stdio_putchar(char c, FILE * stream)
 {
 	USART.DATA = c;
 	while (!(USART.STATUS & 0b01000000));
@@ -31,7 +31,7 @@ static int stdio_putchar(char c, FILE * stream)
 	return 0;
 }
 	
-static int stdio_getchar(FILE *stream)
+int stdio_getchar(FILE *stream)
 {
 	while (!(USART.STATUS & 0b10000000));
 	return USART.DATA;
