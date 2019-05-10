@@ -8,7 +8,9 @@
 
 void EncoderInit(void)
 {
-
+	PORTC.DIR = (PORTC.DIR & 0b11001111);
+	CPU.SREG = (CPU.SREG | 0b10000000);
+	
 }
 int EncoderGetPos(void)
 {
