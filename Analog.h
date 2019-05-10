@@ -1,6 +1,7 @@
 
 #ifndef ANALOG_H
 #define ANALOG_H
+#include <stdint.h>
 
 void AnalogInit(void);			//Initialize ADC system
 int AnalogGetCh(int PinPos,int PinNeg);
@@ -15,6 +16,7 @@ int AnalogGetCh(int PinPos,int PinNeg);
 								//-2048 to 2047 (signed) or 0 to 4095 (unsigned)
 								//10000: Invalid pin settings
 								
+
 uint8_t ReadCalibrationByte(uint8_t index);
 
 #endif
