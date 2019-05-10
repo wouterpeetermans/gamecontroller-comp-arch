@@ -40,10 +40,12 @@ int main(void)
 	
 	
 	while (1){
-		//sprintf(text, "switches: %d\r", SwitchGet());
-		//puts(text);
-//		sprintf(text, "gestuurde output: %d\r",stdio_putchar('0b01010101',stdout));	
-		putchar('U');
+		// Start ADC conversion
+		ADCA.CH0.CTRL |= 0x80;
+		
+		
+		
+		//putchar('U');
 	}
 
 }
