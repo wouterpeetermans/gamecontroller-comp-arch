@@ -18,6 +18,7 @@ unsigned int AccGetYAxisRaw(void)
 }
 unsigned int AccGetZAxisRaw(void)
 {
+
 	return 0;
 }
 
