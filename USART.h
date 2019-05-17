@@ -2,8 +2,8 @@
 #define USART_H
 #include<stdio.h>
 
-#define USART USARTC0  // kwam van USARTD0 -> debug naar J5 zodat
-#define USART_PORT PORTC // kwam van PORTD
+#define USART USARTD0  // kwam van USARTD0 -> debug naar J5 zodat
+#define USART_PORT PORTD // kwam van PORTD
 
 void USARTInit(void); //Initialize USART, bind to stdin,stdout
 int stdio_putchar(char c, FILE * stream);
