@@ -41,9 +41,18 @@ int main(void)
 	
 	while (1){
 		// Start ADC conversion
+<<<<<<< HEAD
 		//ADCA.CH0.CTRL |= 0x80;
+=======
+<<<<<<< HEAD
+		AnalogGetCh(1,2);
+		
+=======
+		ADCA.CH0.CTRL |= 0x80;
+>>>>>>> 4e6a902df20fc88591ccebdade19a949ae9c092c
 		sprintf(text, "encoder: %d\r",EncoderGetPos());
 		puts(text);
+>>>>>>> 7a7d36d8f121f22a8c8b05242030a9992a5f5026
 		
 		
 		for (int i = 1; i<4; i++)
