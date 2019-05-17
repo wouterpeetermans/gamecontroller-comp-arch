@@ -41,9 +41,18 @@ int main(void)
 	
 	while (1){
 		// Start ADC conversion
-		ADCA.CH0.CTRL |= 0x80;
+		//ADCA.CH0.CTRL |= 0x80;
 		sprintf(text, "encoder: %d\r",EncoderGetPos());
 		puts(text);
+		
+		
+		for (int i = 1; i<4; i++)
+		{
+			SpeakerBeep(i*500,1000);
+		}
+		
+		_delay_ms(1000);
+		
 		
 		
 		//putchar('U');
