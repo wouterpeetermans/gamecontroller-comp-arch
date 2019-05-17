@@ -41,8 +41,8 @@ int main(void)
 	
 	while (1){
 		// Start ADC conversion
-		ADCA.CH0.CTRL |= 0x80;
-		printf("encoder: %d",EncoderGetPos());
+		AnalogGetCh(1,2);
+		
 		
 		
 		//putchar('U');

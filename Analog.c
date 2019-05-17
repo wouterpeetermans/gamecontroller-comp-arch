@@ -16,20 +16,13 @@ void AnalogInit(void)
 	// Calibration values are stored at production time
 	// Load stored bytes into the calibration registers
 	// First NVM read is junk and must be thrown away
+	/*
  	ADCA.CALL = ReadCalibrationByte( offsetof(NVM_PROD_SIGNATURES_t, ADCBCAL0) );
  	ADCA.CALH = ReadCalibrationByte( offsetof(NVM_PROD_SIGNATURES_t, ADCBCAL1) );
  	ADCA.CALL = ReadCalibrationByte( offsetof(NVM_PROD_SIGNATURES_t, ADCBCAL0) );
  	ADCA.CALH = ReadCalibrationByte( offsetof(NVM_PROD_SIGNATURES_t, ADCBCAL1) );
-	
-	//////////////////////////////////////////////////////////////////////
-	//ADCB.CH0.CTRL
-	//     7        6       5        4        3        2       1       0
-	// | START  |   -   |   -   |         GAIN[2:0]        | INPUTMODE[1:0] |
-	//     0        0       0        0        0        0       0       0
-	// Place ADC channel in single-ended mode
-	// Gain set to 1
-	ADCA.CH0.CTRL = ADC_CH_INPUTMODE0_bm; // 0x01
-	//////////////////////////////////////////////////////////////////////
+
+	*/
 	
 	//////////////////////////////////////////////////////////////////////
 	//ADCB.CH0.MUXCTRL
@@ -71,10 +64,8 @@ void AnalogInit(void)
 	//     7       6       5       4       3       2        1         0
 	// |   -   |      REFSEL[2:0]      |   -   |   -   | BANDGAP | TEMPREF |
 	//     0       0       0       0       0       0        0         0
-	// Set Vref to Vcc/1.6.  This gives 3.3/1.6 = approx 2.06V
-	// With effectively 11-bit resolution, this means each LSB
-	// will represent approximately 1 mV.
-	ADCA.REFCTRL = ADC_REFSEL0_bm; // 0x10
+	// Set internal 1V.  
+	ADCA.REFCTRL = ADC_REFSEL_INT1V_gc; // 0x10
 	//////////////////////////////////////////////////////////////////////
 	
 	//////////////////////////////////////////////////////////////////////
@@ -129,5 +120,32 @@ uint8_t ReadCalibrationByte(uint8_t index) {
 int AnalogGetCh(int PinPos,int PinNeg)
 {
 
-	return;
+		PinPos <<=3;
+
+		//Get analog channel value
+		int meting = ADCA_CH0_RES;
+		//PinPos:
+		//Differential mode: positive input pin (0 to 15)
+		//ADCA.CH0.CTRL = ADC_CH_INPUTMODE1_bm
+		//Single ended mode: input pin (0 to 15)
+		//////////////////////////////////////////////////////////////////////
+		//ADCB.CH0.CTRL
+		//     7        6       5        4        3        2       1       0
+		// | START  |   -   |   -   |         GAIN[2:0]        | INPUTMODE[1:0] |
+		//     0        0       0        0        0        0       0       0
+		// Place ADC channel in single-ended mode
+		// Gain set to 1
+		ADCA.CH0.CTRL = ADC_CH_INPUTMODE0_bm; // 0x01
+		
+		ADCA_CH0_MUXCTRL = PinPos | PinNeg;
+		//////////////////////////////////////////////////////////////////////
+		
+		//PinNeg:
+		//Differential mode: negative input pin (0 to 7)
+		
+		//Single ended mode: write '-1' to select single ended mode
+		//Return value:
+		//-2048 to 2047 (signed) or 0 to 4095 (unsigned)
+		//10000: Invalid pin settings
+		return meting;
 }
