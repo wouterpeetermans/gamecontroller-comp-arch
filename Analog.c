@@ -11,7 +11,7 @@ void AnalogInit(void)
 {
 	// ADC Clock was disabled initially in sysclk_init()
 	// Must re-activate the ADC clock before configuring its registers (we're using ADCB)
-//	PR.PRPB &= ~0x02; // Clear ADC bit in Power Reduction Port B Register
+	PR.PRPA &= ~0x02; // Clear ADC bit in Power Reduction Port B Register
 	
 	// Calibration values are stored at production time
 	// Load stored bytes into the calibration registers
@@ -23,17 +23,7 @@ void AnalogInit(void)
  	ADCA.CALH = ReadCalibrationByte( offsetof(NVM_PROD_SIGNATURES_t, ADCBCAL1) );
 
 	*/
-	
-	//////////////////////////////////////////////////////////////////////
-	//ADCB.CH0.MUXCTRL
-	//     7        6       5        4        3        2       1       0
-	// |   -    |           MUXPOS[3:0]             |     MUXNEG[2:0]     |
-	//     0        0       0        0        0        0       0       0
-	// Connect potentiometer (PB1) to positive input
-	// MUXNEG bits are ignored in single-ended mode
-	ADCA.CH0.MUXCTRL = ADC_CH_MUXINT0_bm; // 0x08
-	//////////////////////////////////////////////////////////////////////
-	
+		
 	//////////////////////////////////////////////////////////////////////
 	//ADCB.CTRLB
 	//     7        6       5         4         3         2       1        0
@@ -106,16 +96,6 @@ void AnalogInit(void)
 }
 
 
-uint8_t ReadCalibrationByte(uint8_t index) {
-	
-	uint8_t result;
-	NVM_CMD = NVM_CMD_READ_CALIB_ROW_gc;
-	result = pgm_read_byte(index);
-	
-	NVM_CMD = NVM_CMD_NO_OPERATION_gc;
-	
-	return result;
-}
 
 int AnalogGetCh(int PinPos,int PinNeg)
 {

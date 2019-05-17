@@ -41,14 +41,16 @@ int main(void)
 	
 	while (1){
 		// Start ADC conversion
-<<<<<<< HEAD
-		AnalogGetCh(1,2);
+		//pinnen nog niet correct
+		sprintf(text, "Analog: %d\r",AnalogGetCh(1,2));
 		
-=======
-		ADCA.CH0.CTRL |= 0x80;
-		sprintf(text, "encoder: %d\r",EncoderGetPos());
 		puts(text);
->>>>>>> 7a7d36d8f121f22a8c8b05242030a9992a5f5026
+
+		
+		//ADCA.CH0.CTRL |= 0x80;
+	//	sprintf(text, "encoder: %d\r",EncoderGetPos());
+	//	puts(text);
+
 		
 		
 		//putchar('U');
