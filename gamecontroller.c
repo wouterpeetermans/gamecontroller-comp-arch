@@ -57,3 +57,12 @@ void runningLight(){
 		LEDSet(0b00000001 << i);
 	}
 }
+/*
+int getAD10(){
+	int rslt;
+	while(!ADC_Ch_Conversion_Complete(&ADCA.CH0));
+	rslt = ADC_ResultCh_GetWord(&ADCA.CH0);
+	ADCA.CTRLA = 0x05;    //start conv.
+	return rslt;
+}
+*/

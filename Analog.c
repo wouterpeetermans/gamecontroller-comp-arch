@@ -2,21 +2,24 @@
 #include <avr/io.h>
 #include <avr/pgmspace.h>
 #include <stddef.h>
+#include <stdint.h>
+#include <inttypes.h>
+
 
 
 void AnalogInit(void)
 {
 	// ADC Clock was disabled initially in sysclk_init()
 	// Must re-activate the ADC clock before configuring its registers (we're using ADCB)
-	PR.PRPB &= ~0x02; // Clear ADC bit in Power Reduction Port B Register
+//	PR.PRPB &= ~0x02; // Clear ADC bit in Power Reduction Port B Register
 	
 	// Calibration values are stored at production time
 	// Load stored bytes into the calibration registers
 	// First NVM read is junk and must be thrown away
-	ADCA.CALL = ReadCalibrationByte( offsetof(NVM_PROD_SIGNATURES_t, ADCBCAL0) );
-	ADCA.CALH = ReadCalibrationByte( offsetof(NVM_PROD_SIGNATURES_t, ADCBCAL1) );
-	ADCA.CALL = ReadCalibrationByte( offsetof(NVM_PROD_SIGNATURES_t, ADCBCAL0) );
-	ADCA.CALH = ReadCalibrationByte( offsetof(NVM_PROD_SIGNATURES_t, ADCBCAL1) );
+ 	ADCA.CALL = ReadCalibrationByte( offsetof(NVM_PROD_SIGNATURES_t, ADCBCAL0) );
+ 	ADCA.CALH = ReadCalibrationByte( offsetof(NVM_PROD_SIGNATURES_t, ADCBCAL1) );
+ 	ADCA.CALL = ReadCalibrationByte( offsetof(NVM_PROD_SIGNATURES_t, ADCBCAL0) );
+ 	ADCA.CALH = ReadCalibrationByte( offsetof(NVM_PROD_SIGNATURES_t, ADCBCAL1) );
 	
 	//////////////////////////////////////////////////////////////////////
 	//ADCB.CH0.CTRL
@@ -110,7 +113,8 @@ void AnalogInit(void)
 	ADCA.CTRLA = ADC_ENABLE_bm; // 0x01
 	//////////////////////////////////////////////////////////////////////
 }
-}
+
+
 uint8_t ReadCalibrationByte(uint8_t index) {
 	
 	uint8_t result;
@@ -119,8 +123,9 @@ uint8_t ReadCalibrationByte(uint8_t index) {
 	
 	NVM_CMD = NVM_CMD_NO_OPERATION_gc;
 	
-	return(result);
+	return result;
 }
+
 int AnalogGetCh(int PinPos,int PinNeg)
 {
 
