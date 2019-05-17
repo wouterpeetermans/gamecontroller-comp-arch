@@ -7,13 +7,16 @@
 #include "encoder.h"
 volatile int encoderPos = 0;
 volatile uint8_t prevpos;
+volatile uint8_t currentPos;
 
 void EncoderInit(void)
 {
 	PORTC.DIR = (PORTC.DIR & 0b11001111);
+	PORTC.PIN4CTRL = 0b00011000;
+	PORTC.PIN5CTRL = 0b00011000;
 	PORTC.INTCTRL = 0b00001111;
 	PORTC.INT0MASK = 0b00010000;
-	PORTC.INT1MASK = 0b00001000;
+	PORTC.INT1MASK = 0b00100000;
 	SREG = (SREG | 0b10000000);
 	PMIC.CTRL = 0b00000100;
 	
@@ -33,38 +36,71 @@ ISR(PORTC_INT1_vect){
 	encoderPos += readEncoder();
 }
 
-int readEncoder(){
-	uint8_t currentPos = (PORTC.IN >> 3) & 0b00000011;
-	switch (currentPos) {
-		case 0:
-			if (prevpos == 3){
-				return 1;
-			} else if (prevpos == 1){
-				return -1;
-			}
-			break;
-		case 1:
-			if (prevpos == 0){
-				return 1;
-				} else if (prevpos == 2){
-				return -1;
-			}
-			break;
-		case 2:
-			if (prevpos == 1){
-				return 1;
-				} else if (prevpos == 3){
-				return -1;
-			}
-			break;
-		case 3:
-			if (prevpos == 2){
-				return 1;
-				} else if (prevpos == 0){
-				return -1;
-			}
-			break;
-		default:
-			return 0;
+
+// documentation of the arduino encoder library
+//                           _______         _______       
+//               Pin1 ______|       |_______|       |______ Pin1
+// negative <---         _______         _______         __      --> positive
+//               Pin2 __|       |_______|       |_______|   Pin2
+
+		//	new	new	old	old
+		//	pin2	pin1	pin2	pin1	Result
+		//	----	----	----	----	------
+		//	0	0	0	0	no movement
+		//	0	0	0	1	+1
+		//	0	0	1	0	-1
+		//	0	0	1	1	+2  (assume pin1 edges only)
+		//	0	1	0	0	-1
+		//	0	1	0	1	no movement
+		//	0	1	1	0	-2  (assume pin1 edges only)
+		//	0	1	1	1	+1
+		//	1	0	0	0	+1
+		//	1	0	0	1	-2  (assume pin1 edges only)
+		//	1	0	1	0	no movement
+		//	1	0	1	1	-1
+		//	1	1	0	0	+2  (assume pin1 edges only)
+		//	1	1	0	1	-1
+		//	1	1	1	0	+1
+		//	1	1	1	1	no movement
+/*
+	// Simple, easy-to-read "documentation" version :-)
+	//
+	void update(void) {
+		uint8_t s = state & 3;
+		if (digitalRead(pin1)) s |= 4;
+		if (digitalRead(pin2)) s |= 8;
+		switch (s) {
+			case 0: case 5: case 10: case 15:
+				break;
+			case 1: case 7: case 8: case 14:
+				position++; break;
+			case 2: case 4: case 11: case 13:
+				position--; break;
+			case 3: case 12:
+				position += 2; break;
+			default:
+				position -= 2; break;
+		}
+		state = (s >> 2);
 	}
+*/
+
+int readEncoder(){
+	currentPos = (PORTC.IN >> 4) & 3;
+	uint8_t s = (currentPos << 2) | prevpos;
+	int position = 0;
+	switch (s) {
+		case 0: case 5: case 10: case 15:
+		break;
+		case 1: case 7: case 8: case 14:
+		position++; break;
+		case 2: case 4: case 11: case 13:
+		position--; break;
+		case 3: case 12:
+		position += 2; break;
+		default:
+		position -= 2; break;
+	}
+	prevpos = currentPos;
+	return position;
 }

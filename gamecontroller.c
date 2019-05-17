@@ -13,7 +13,7 @@
 #include "speaker.h"
 
 
-char text[11];
+char text[15];
 char a;
 
 void SimpleFunction(void);	//A simple function: print a counter (0 to 9) to the terminal
@@ -42,7 +42,8 @@ int main(void)
 	while (1){
 		// Start ADC conversion
 		ADCA.CH0.CTRL |= 0x80;
-		printf("encoder: %d",EncoderGetPos());
+		sprintf(text, "encoder: %d\r",EncoderGetPos());
+		puts(text);
 		
 		
 		//putchar('U');
