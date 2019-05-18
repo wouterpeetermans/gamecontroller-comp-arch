@@ -13,7 +13,7 @@
 #include "speaker.h"
 
 
-char text[15];
+char text[100];
 char a;
 
 void SimpleFunction(void);	//A simple function: print a counter (0 to 9) to the terminal
@@ -39,26 +39,24 @@ int main(void)
 	
 	
 	
+	
 	while (1){
 		// Start ADC conversion
-<<<<<<< HEAD
 		//ADCA.CH0.CTRL |= 0x80;
-=======
-<<<<<<< HEAD
-		AnalogGetCh(1,2);
-		
-=======
-		ADCA.CH0.CTRL |= 0x80;
->>>>>>> 4e6a902df20fc88591ccebdade19a949ae9c092c
-		sprintf(text, "encoder: %d\r",EncoderGetPos());
+
+
+		sprintf(text, "encoder: %d\r",(int)PORTC.DIR);
 		puts(text);
->>>>>>> 7a7d36d8f121f22a8c8b05242030a9992a5f5026
 		
 		
+		//SpeakerBeep(500,1000);
+		//SpeakerBeep(1000,1000);
+		//SpeakerBeep(1500,1000);
 		for (int i = 1; i<4; i++)
 		{
 			SpeakerBeep(i*500,1000);
 		}
+		
 		
 		_delay_ms(1000);
 		

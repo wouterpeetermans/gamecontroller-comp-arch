@@ -10,11 +10,11 @@ void SpeakerInit(void)
 		PORTC.PIN0CTRL = 0b00010000;
 		
 		//Setup TC for frequency generation
-		TCC0.CTRLA= 0b00000110;
+		TCC0.CTRLA= 0;
 		TCC0.CTRLB= 0b00010011;
 		//TCC0.CTRLC= 
-		TCC0.CTRLD= 0;
-		TCC0.CTRLE= 0;
+		TCC0.CTRLD= 0b00000000;
+		TCC0.CTRLE= 0b00000000;
 		
 		//Setup TC for duration timing
 		//TCC1.CTRLA=
@@ -26,11 +26,14 @@ void SpeakerInit(void)
 }
 void SpeakerBeep(int Frequency,int Length)
 {
+	TCC0.CTRLA= 0b00000110;
+	TCC0.CNT = 0;
 	TCC0.PER = 125000/Frequency;
 	TCC0.CCA = TCC0.PER / 2;
 	PORTC.DIRSET = 0b00000001;
 	_delay_ms(Length);
 	PORTC.DIRCLR = 0b00000001;
+	TCC0.CTRLA = 0;
 }
 
 
