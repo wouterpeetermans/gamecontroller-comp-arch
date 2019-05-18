@@ -29,6 +29,7 @@ int EncoderGetPos(void)
 }
 
 ISR(PORTC_INT0_vect){
+	
 	encoderPos += readEncoder();
 }
 
@@ -86,6 +87,7 @@ ISR(PORTC_INT1_vect){
 */
 
 int readEncoder(){
+	_delay_ms(2);
 	currentPos = (PORTC.IN >> 4) & 3;
 	uint8_t s = (currentPos << 2) | prevpos;
 	int position = 0;

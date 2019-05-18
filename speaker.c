@@ -3,6 +3,8 @@
 #include <util/delay.h>
 #include "speaker.h"
 
+//All calculations for timers are based on the external 16MHz base clock. 
+
 void SpeakerInit(void)
 {
 		//Setup IO
@@ -13,7 +15,7 @@ void SpeakerInit(void)
 		TCC0.CTRLA= 0; //turn counter of
 		TCC0.CTRLB= 0b00010011; //set counter in single slope pwm mode and overwrite the first pin of the port with the pwm signal.
 		//TCC0.CTRLC=  //nothing to see here
-		TCC0.CTRLD= 0; //random settings not important just turnn of
+		TCC0.CTRLD= 0; //random settings not important just turn of
 		TCC0.CTRLE= 0;
 		
 		//Setup TC for duration timing
