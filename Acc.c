@@ -31,17 +31,17 @@ unsigned int AccGetZAxisRaw(void)
 
 int AccGetXAxis(unsigned int AccRaw)
 {
-	return AccRaw - 300;
+	return (AccRaw - 300)/4;
 }
 
 int AccGetYAxis(unsigned int AccRaw)
 {
-	return AccRaw - 350;
+	return (AccRaw - 350)/4;
 }
 
 int AccGetZAxis(unsigned int AccRaw)
 {
-	return AccRaw - 200;
+	return (AccRaw - 200)/4;
 }
 
 int map(int x, int in_min, int in_max, int out_min, int out_max)
