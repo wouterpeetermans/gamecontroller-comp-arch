@@ -45,21 +45,22 @@ int main(void)
 		//ADCA.CH0.CTRL |= 0x80;
 
 
-		sprintf(text, "encoder: %d\r",(int)PORTC.DIR);
+
+		sprintf(text, "ACCRAW %d %d %d\r\n",AccGetXAxis(AccGetXAxisRaw()),AccGetYAxis(AccGetYAxisRaw()),AccGetZAxis(AccGetZAxisRaw()));
 		puts(text);
 		
 		
 		//SpeakerBeep(500,1000);
 		//SpeakerBeep(1000,1000);
 		//SpeakerBeep(1500,1000);
-		for (int i = 1; i<4; i++)
-		{
-			SpeakerBeep(i*500,1000);
-		}
-		
-		
-		_delay_ms(10000);
-		
+		//for (int i = 1; i<4; i++) //clean code for 3 beeps. This long for better measurements
+		//{
+			//SpeakerBeep(i*500,2000);
+		//}
+		//
+		//
+		//_delay_ms(10000);
+		//
 
 		
 		

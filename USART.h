@@ -1,7 +1,7 @@
 #ifndef USART_H
 #define USART_H
 #include<stdio.h>
-
+//set the correct usart port here
 #define USART USARTD0  // kwam van USARTD0 -> debug naar J5 zodat
 #define USART_PORT PORTD // kwam van PORTD
 

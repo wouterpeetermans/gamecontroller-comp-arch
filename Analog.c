@@ -1,6 +1,7 @@
 #include "Analog.h"
 #include <avr/io.h>
 #include <avr/pgmspace.h>
+#include <util/delay.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <inttypes.h>
@@ -9,123 +10,26 @@
 
 void AnalogInit(void)
 {
-	// ADC Clock was disabled initially in sysclk_init()
-	// Must re-activate the ADC clock before configuring its registers (we're using ADCB)
-	PR.PRPA &= ~0x02; // Clear ADC bit in Power Reduction Port B Register
+	ADCA.CTRLA = 0;
+	ADCA.CTRLB = 0b00010000; //no current limit signed mode 12bit.
+	ADCA.REFCTRL = 2; //enable bandgap and set reference to 1v internal source disable temp detection
+	ADCA.EVCTRL = 0; //no events
+	ADCA.PRESCALER = 0; //div 4 prescaler
 	
-	// Calibration values are stored at production time
-	// Load stored bytes into the calibration registers
-	// First NVM read is junk and must be thrown away
-	/*
- 	ADCA.CALL = ReadCalibrationByte( offsetof(NVM_PROD_SIGNATURES_t, ADCBCAL0) );
- 	ADCA.CALH = ReadCalibrationByte( offsetof(NVM_PROD_SIGNATURES_t, ADCBCAL1) );
- 	ADCA.CALL = ReadCalibrationByte( offsetof(NVM_PROD_SIGNATURES_t, ADCBCAL0) );
- 	ADCA.CALH = ReadCalibrationByte( offsetof(NVM_PROD_SIGNATURES_t, ADCBCAL1) );
-
-	*/
-		
-	//////////////////////////////////////////////////////////////////////
-	//ADCB.CTRLB
-	//     7        6       5         4         3         2       1        0
-	// |   -   | CURRLIMIT[1:0] | CONVMODE | FREERUN | RESOLUTION[1:0] |   -   |
-	//     0        0       0         0         0         0       0        0
-	// Apply no limit to ADC sample rate
-	// Put ADC in signed mode
-	// Disable Free-run mode (single conversion upon trigger)
-	// Resolution set to 12-bit, right justified (11-bit effective in signed mode)
-	ADCA.CTRLB = ADC_CONMODE_bm; // 0x10
-	//////////////////////////////////////////////////////////////////////
-	
-	//////////////////////////////////////////////////////////////////////
-	//ADCB.PRESCALER
-	//     7       6       5       4       3       2       1       0
-	// |   -   |   -   |   -   |   -   |       |     PRESCALER[2:0]    |
-	//     0       0       0       0       0       0       0       0
-	// The ADC runs off of the CPU_per clock
-	// In sys_clk_init() the internal 2MHz RC osc was used to source a 16 MHz PLL
-	// The PLL is then divided using Prescalers A, B, and C setting CPU_per to 8 MHz
-	// According to AVR1300, the ADC clock should run in the range 100 kHz ~ approx 1.4 MHz
-	// Set ADC clock to 125kHz:  CPU_per/64    =>    8MHz/64 = 125kHz
-	ADCA.PRESCALER = ADC_PRESCALER2_bm; // 0x04
-	//////////////////////////////////////////////////////////////////////
-	
-	//////////////////////////////////////////////////////////////////////
-	//ADCB.REFCTRL
-	//     7       6       5       4       3       2        1         0
-	// |   -   |      REFSEL[2:0]      |   -   |   -   | BANDGAP | TEMPREF |
-	//     0       0       0       0       0       0        0         0
-	// Set internal 1V.  
-	ADCA.REFCTRL = ADC_REFSEL_INT1V_gc; // 0x10
-	//////////////////////////////////////////////////////////////////////
-	
-	//////////////////////////////////////////////////////////////////////
-	//ADCB.EVCTRL
-	//     7       6       5       4       3       2       1       0
-	// |   -   |   -   |   -   |   EVSEL[1:0]  |      EVACT[2:0]       |
-	//     0       0       0       0       0       0       0       0
-	// Not implementing Event System so ensure EVCTRL is reading zeros
-	ADCA.EVCTRL = 0x00;
-	//////////////////////////////////////////////////////////////////////
-	
-	//////////////////////////////////////////////////////////////////////
-	//ADCB.INTFLAGS
-	//     7       6       5       4       3       2       1       0
-	// |   -   |   -   |   -   |   -   |   -   |   -   |   -   | CH0IF |
-	//     0       0       0       0       0       0       0       0
-	// Ensure the ADC complete flag is cleared (by writing a '1' to it)
-	ADCA.INTFLAGS = ADC_CH0IF_bm; // 0x01
-	//////////////////////////////////////////////////////////////////////
-	
-	//////////////////////////////////////////////////////////////////////
-	//ADCB.CH0.INTCTRL
-	//     7       6       5       4        3       2       1       0
-	// |   -   |   -   |   -   |   -   |  INTMODE[1:0]  |  INTLVL[1:0]  |
-	//     0       0       0       0        0       0       0       0
-	// Configure interrupt on conversion complete with high priority
-	ADCA.CH0.INTCTRL = ADC_CH_INTLVL1_bm | ADC_CH_INTLVL0_bm; // 0x03
-	//////////////////////////////////////////////////////////////////////
-	
-	//////////////////////////////////////////////////////////////////////
-	//ADCB.CTRLA
-	//     7       6       5       4       3         2        1        0
-	// |   -   |   -   |   -   |   -   |   -   | CH0START | FLUSH | ENABLE |
-	//     0       0       0       0       0         0        0        0
-	// Enable ADC, module B
-	ADCA.CTRLA = ADC_ENABLE_bm; // 0x01
-	//////////////////////////////////////////////////////////////////////
 }
 
 
 
 int AnalogGetCh(int PinPos,int PinNeg)
 {
-
-		PinPos <<=3;
-
-		//Get analog channel value
-		int meting = ADCA_CH0_RES;
-		//PinPos:
-		//Differential mode: positive input pin (0 to 15)
-		//ADCA.CH0.CTRL = ADC_CH_INPUTMODE1_bm
-		//Single ended mode: input pin (0 to 15)
-		//////////////////////////////////////////////////////////////////////
-		//ADCB.CH0.CTRL
-		//     7        6       5        4        3        2       1       0
-		// | START  |   -   |   -   |         GAIN[2:0]        | INPUTMODE[1:0] |
-		//     0        0       0        0        0        0       0       0
-		// Place ADC channel in single-ended mode
-		// Gain set to 1
-		ADCA.CH0.CTRL = ADC_CH_INPUTMODE0_bm; // 0x01
-		
-		ADCA_CH0_MUXCTRL = PinPos | PinNeg;
-		//////////////////////////////////////////////////////////////////////
-		
-		//PinNeg:
-		//Differential mode: negative input pin (0 to 7)
-		
-		//Single ended mode: write '-1' to select single ended mode
-		//Return value:
-		//-2048 to 2047 (signed) or 0 to 4095 (unsigned)
-		//10000: Invalid pin settings
-		return meting;
+	ADCA.CH0.MUXCTRL = (((uint8_t) PinPos) << 3) | ((uint8_t) PinNeg);
+	ADCA.CTRLA = 7; //flush all data and start measurement enable adc
+	ADCA.CH0.CTRL = 0b10000011; //gain 1 difwgain mode
+	//while(!ADCA.CH0.RES){ //wait for data in the register. can be done with interupt ... (didn't work)
+		//
+	//}
+	_delay_ms(1);//delay to wait for measurement to complete 
+	int result = ADCA.CH0.RES;
+	ADCA.CTRLA = 0; //turn of adc
+	return result;
 }
